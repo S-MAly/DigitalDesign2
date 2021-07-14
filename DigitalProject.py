@@ -21,7 +21,7 @@ def filling(route, src, tar, rows,cols,layer):
         #print('i: ',i)
 
         if (l == tar[0] - 1 and x == tar[1] and y == tar[2]):
-            print('L,X,Y: ',L , X , Y)
+           # print('L,X,Y: ',L , X , Y)
             return i
 
         #if (l == 0):
@@ -76,12 +76,12 @@ def BackPropagation(grid, matrix, src,tar, rows,cols) :
     y = tar[2]
     matrix[x][y][l] = 1
     while (not (l == src[0] - 1 and x == src[1] and y == src[2])):
-        print('x: ',x,'y: ', y)
-        print(grid[x][y])
-        print(grid[x][y][l])
+       # print('x: ',x,'y: ', y)
+      #  print(grid[x][y])
+      #  print(grid[x][y][l])
         if (grid[x][y][l] == 1 ):break  # or grid[x][y]=='X'
 
-        if (y - 1 >= 0 and y - 1 < cols  and grid[x][y-1][l] != 'X' and grid[x][y][l] - grid[x][y - 1][l] == 1):
+        if ( y - 1 >= 0 and y - 1 < cols  and grid[x][y-1][l] != 'X' and grid[x][y][l] - grid[x][y - 1][l] == 1):
 
             y = y - 1
             matrix[x][y][l] = 1
@@ -91,7 +91,7 @@ def BackPropagation(grid, matrix, src,tar, rows,cols) :
             y = y + 1
             matrix[x][y][l] = 1
 
-        elif (x-1 >= 0  and  x - 1 < rows and grid[x-1][y][l] != 'X'  and grid[x][y][l] - grid[x - 1][y][l] == 1):
+        elif ( x-1 >= 0  and  x - 1 < rows and grid[x-1][y][l] != 'X'  and grid[x][y][l] - grid[x - 1][y][l] == 1):
             x = x - 1
             matrix[x][y][l] = 1
 
@@ -230,10 +230,21 @@ if __name__ == '__main__':
                     route.append([])
                     for y in range(cols):
                         route[x].append([])
+                       # print([z,x,y])
+                       # print(netsout[str(2 - 1)])
+
                         if [x,y] in obstacles:
-
                             route[x][y].append('X')
-
+                        elif i != '1' :
+                            flag=1
+                            for m in range(1,int(i)):
+                                if [z,x,y] in netsout[str(int(i)-1)]:
+                                    print('x')
+                                    route[x][y].append('X')
+                                    flag=0
+                                    break
+                            if flag ==1:
+                                route[x][y].append(0)
                         else:
                             route[x][y].append(0)
 
@@ -279,7 +290,9 @@ if __name__ == '__main__':
                    # for z in range(1):
                     #    print(route[x][y][0],end=' ')
                 #print()
-
+            if minCost == -1:
+                print("Unsuccessful!")
+                break
             print(minCost)
             #break
             #for r in range(0,rows):
@@ -296,10 +309,17 @@ if __name__ == '__main__':
                     #    t = min(route[r][b][0], route[r][b][1])
 
                    # grid[r][b] = t
+            matrix = []
+            for x in range(rows):
+                matrix.append([])
+                for y in range(cols):
+                    matrix[x].append([])
+                    for z in range(layer):
+                        matrix[x][y].append(0)
 
             BackPropagation(route, matrix, nets[i][cells],nets[i][cells+1], rows , cols)
 
-            print('nets: ',int(nets[i][cells][1]))
+            #print('nets: ',int(nets[i][cells][1]))
 
 # printing final grid and saving the cells in nets ; works correctly
             for l in range(layer):
@@ -323,6 +343,13 @@ if __name__ == '__main__':
                    print()
 
                 print()
+            for l in range(layer):
+                for x in range(rows):
+                    for y in range(cols):
+                        if matrix[x][y][l]==1:
+                            grid[x][y][l]=1
+
+
 #################################################################################################
            # for r in range(rows):
             #    for b in range(cols):
@@ -352,6 +379,27 @@ if __name__ == '__main__':
         #for (int x = 0 x < res.size() x++) {
         #for (int y = 0 y < res[x].size() - 1 y++) {
        # vector < vector < vector < int >> > route(n, vector < vector < int >> (n, vector < int > (2, 0)))
+
+        for l in range(layer):
+            for r in range(rows):
+                for b in range(cols):
+                    # for l in range(layer):
+                    if r == int(nets[i][cells][1]) and int(nets[i][cells][2]) == b and int(nets[i][cells][0]) == l + 1:
+
+                        print('S', end=' ')
+                    elif r == int(nets[i][cells + 1][1]) and int(nets[i][cells + 1][2]) == b and int(
+                            nets[i][cells + 1][0]) == l + 1:
+
+                        print('T', end=' ')
+                    elif grid[r][b][l] == 1:
+                        print('1', end=' ')
+                    elif [r, b] in obstacles:
+                        print('X', end=' ')
+                    else:
+                        print('0', end=' ')
+                print()
+            print()
+
         print(netsout)
        # minCost = fill(route, res[x][y], res[x][y + 1], n)
 
